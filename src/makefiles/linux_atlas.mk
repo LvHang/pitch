@@ -3,12 +3,6 @@
 ifndef DOUBLE_PRECISION
 $(error DOUBLE_PRECISION not defined.)
 endif
-ifndef OPENFSTINC
-$(error OPENFSTINC not defined.)
-endif
-ifndef OPENFSTLIBS
-$(error OPENFSTLIBS not defined.)
-endif
 ifndef ATLASINC
 $(error ATLASINC not defined.)
 endif
@@ -16,7 +10,7 @@ ifndef ATLASLIBS
 $(error ATLASLIBS not defined.)
 endif
 
-CXXFLAGS = -std=c++11 -I.. -I$(OPENFSTINC) $(EXTRA_CXXFLAGS) \
+CXXFLAGS = -std=c++11 -I.. $(EXTRA_CXXFLAGS) \
            -Wall -Wno-sign-compare -Wno-unused-local-typedefs \
            -Wno-deprecated-declarations -Winit-self \
            -DKALDI_DOUBLEPRECISION=$(DOUBLE_PRECISION) \
@@ -35,5 +29,5 @@ ifeq ($(findstring clang,$(COMPILER)),clang)
 CXXFLAGS += -Wno-mismatched-tags
 endif
 
-LDFLAGS = $(EXTRA_LDFLAGS) $(OPENFSTLDFLAGS) -rdynamic
-LDLIBS = $(EXTRA_LDLIBS) $(OPENFSTLIBS) $(ATLASLIBS) -lm -lpthread -ldl
+LDFLAGS = $(EXTRA_LDFLAGS) -rdynamic
+LDLIBS = $(EXTRA_LDLIBS) $(ATLASLIBS) -lm -lpthread -ldl

@@ -1040,37 +1040,6 @@ if $double_precision; then
 else
   echo "DOUBLE_PRECISION = 0" >> kaldi.mk
 fi
-echo "Checking OpenFst library in $FSTROOT ..."
-if [ ! -f $FSTROOT/include/fst/fst.h  ]; then
-  failure "Could not find file $FSTROOT/include/fst/fst.h:
-  you may not have installed OpenFst. See ../tools/INSTALL"
-fi
-OPENFST_VER=${OPENFST_VER:-$(grep 'PACKAGE_VERSION' $FSTROOT/Makefile | sed -e 's:.*= ::')}
-OPENFST_VER_NUM=$(echo $OPENFST_VER | sed 's/\./ /g' | xargs printf "%d%02d%02d")
-if [ $OPENFST_VER_NUM -lt 10600 ]; then
-  failure "OpenFst-$OPENFST_VER is not supported. You need OpenFst >= 1.6.0.)"
-fi
-echo "OPENFSTINC = $FSTROOT/include" >> kaldi.mk
-if $static_fst ; then
-  OPENFSTLIBS="$FSTROOT/lib/libfst.a"
-else
-  if [ "`uname`" == "Darwin"  ]; then
-    OPENFSTLIBS="$FSTROOT/lib/libfst.dylib"
-    OPENFSTLDFLAGS="-Wl,-rpath -Wl,${FSTROOT}/lib"
-  elif [ "`uname`" == "Linux" ]; then
-    OPENFSTLIBS="$FSTROOT/lib/libfst.so"
-    OPENFSTLDFLAGS="-Wl,-rpath=${FSTROOT}/lib"
-  else
-    failure "Dynamic libraries are not supported on this platform.
-             Run configure with --static --static-fst=no flag."
-  fi
-fi
-if [ ! -f "$OPENFSTLIBS" ]; then
-  failure "Static=[$static_fst] OpenFST library not found:  See ../tools/INSTALL"
-fi
-echo "OPENFSTLIBS = $OPENFSTLIBS" >> kaldi.mk
-echo "OPENFSTLDFLAGS = $OPENFSTLDFLAGS" >> kaldi.mk
-echo >> kaldi.mk
 
 # OS-specific steps given below append to kaldi.mk
 echo "Doing OS specific configurations ..."

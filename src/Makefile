@@ -5,9 +5,9 @@
 SHELL := /bin/bash
 
 
-SUBDIRS = base matrix util feat thread transform featbin
+SUBDIRS = base matrix util feat featbin
 
-MEMTESTDIRS = base matrix util feat thread transform featbin
+MEMTESTDIRS = base matrix util feat featbin
 
 SUBDIRS_LIB = $(filter-out %bin, $(SUBDIRS))
 
@@ -103,13 +103,11 @@ base/.depend.mk:
 ### Dependency list ###
 # this is necessary for correct parallel compilation
 #1)The tools depend on all the libraries
-featbin: base matrix util feat thread transform
+featbin: base matrix util feat
 
 #2)The libraries have inter-dependencies
 base: base/.depend.mk
 matrix: base
-thread: base
-util: base matrix thread
-feat: base matrix util transform thread
-transform: base util matrix thread
+util: base matrix
+feat: base matrix util
 

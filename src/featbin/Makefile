@@ -11,8 +11,8 @@ OBJFILES =
 
 TESTFILES =
 
-ADDLIBS = ../feat/kaldi-feat.a ../transform/kaldi-transform.a \
-		  ../util/kaldi-util.a ../thread/kaldi-thread.a \
+ADDLIBS = ../feat/kaldi-feat.a \
+		  ../util/kaldi-util.a \
           ../matrix/kaldi-matrix.a ../base/kaldi-base.a 
 
 include ../makefiles/default_rules.mk

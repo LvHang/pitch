@@ -208,12 +208,8 @@ struct  RspecifierOptions {
   // scp files that can't be read as if the corresponding key were not there.
   // For archive files it will suppress errors getting thrown if the archive
   // is corrupted and can't be read to the end.
-  bool background;  // For sequential readers, if the background option ("bg")
-                    // is provided, it will read ahead to the next object in a
-                    // background thread.
   RspecifierOptions(): once(false), sorted(false),
-                       called_sorted(false), permissive(false),
-                       background(false) { }
+                       called_sorted(false), permissive(false) { }
 };
 
 enum RspecifierType  {

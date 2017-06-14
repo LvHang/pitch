@@ -13,7 +13,7 @@ OBJFILES = text-utils.o kaldi-io.o \
 
 LIBNAME = kaldi-util
 
-ADDLIBS = ../thread/kaldi-thread.a ../matrix/kaldi-matrix.a \
+ADDLIBS = ../matrix/kaldi-matrix.a \
           ../base/kaldi-base.a 
 
 include ../makefiles/default_rules.mk
