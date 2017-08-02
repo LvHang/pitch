@@ -29,14 +29,6 @@ template<typename Real>
 Matrix<Real>::Matrix(): MatrixBase<Real>(NULL, 0, 0, 0) { }
 
 
-template<>
-template<>
-void MatrixBase<float>::AddVecVec(const float alpha, const VectorBase<float> &ra, const VectorBase<float> &rb);
-
-template<>
-template<>
-void MatrixBase<double>::AddVecVec(const double alpha, const VectorBase<double> &ra, const VectorBase<double> &rb);
-
 template<typename Real>
 inline std::ostream & operator << (std::ostream & os, const MatrixBase<Real> & M) {
   M.Write(os, false);

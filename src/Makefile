@@ -48,7 +48,7 @@ subdirs: $(SUBDIRS)
 #I don't want to call rm -rf
 rmlibdir:
 ifneq ($(KALDILIBDIR), )
-	-rm $(KALDILIBDIR)/*{.so,.a,.o}
+	-rm $(KALDILIBDIR)/*.so
 	-rmdir $(KALDILIBDIR)
 else
 	@true

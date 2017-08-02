@@ -7,11 +7,9 @@ include ../kaldi.mk
 
 # you can uncomment matrix-lib-speed-test if you want to do the speed tests.
 
-TESTFILES = matrix-lib-test sparse-matrix-test
+TESTFILE =
 
-OBJFILES = kaldi-matrix.o kaldi-vector.o packed-matrix.o sp-matrix.o tp-matrix.o \
-           matrix-functions.o qr.o srfft.o compressed-matrix.o \
-           sparse-matrix.o optimization.o
+OBJFILES = kaldi-matrix.o kaldi-vector.o
 
 LIBNAME = kaldi-matrix
 
