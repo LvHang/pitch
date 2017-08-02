@@ -25,7 +25,6 @@
 #include <limits>
 
 #include "feat/feature-functions.h"
-#include "feat/mel-computations.h"
 #include "feat/online-feature.h"
 #include "feat/pitch-functions.h"
 #include "feat/resample.h"

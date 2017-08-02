@@ -6,7 +6,7 @@ include ../kaldi.mk
 
 TESTFILES = resample-test
 
-OBJFILES = feature-functions.o mel-computations.o wave-reader.o \
+OBJFILES = feature-functions.o wave-reader.o \
            pitch-functions.o resample.o \
 		   feature-window.o
 
