@@ -194,11 +194,12 @@ template<typename Real>
 void MatrixBase<Real>::Transpose() {
   KALDI_ASSERT(num_rows_ == num_cols_);
   MatrixIndexT M = num_rows_;
-  for (MatrixIndexT i = 0;i < M;i++)
+  for (MatrixIndexT i = 0;i < M;i++) {
     for (MatrixIndexT j = 0;j < i;j++) {
       Real &a = (*this)(i, j), &b = (*this)(j, i);
       std::swap(a, b);
     }
+  }
 }
 
 template<typename Real>

@@ -1178,6 +1178,7 @@ void OnlinePitchFeatureImpl::AcceptWaveform(
     BaseFloat remainder = forward_cost_.Min();
     forward_cost_remainder_ += remainder;
     forward_cost_.Add(-remainder);
+    
     frame_info_.push_back(cur_info);
     if (frame < opts_.recompute_frame)
       nccf_info_[frame]->nccf_pitch_resampled =

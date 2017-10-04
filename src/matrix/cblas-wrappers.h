@@ -17,8 +17,8 @@
 // MERCHANTABLITY OR NON-INFRINGEMENT.
 // See the Apache 2 License for the specific language governing permissions and
 // limitations under the License.
-#ifndef KALDI_MATRIX_CBLAS_WRAPPERS_H_
-#define KALDI_MATRIX_CBLAS_WRAPPERS_H_ 1
+#ifndef PITCH_MATRIX_CBLAS_WRAPPERS_H_
+#define PITCH_MATRIX_CBLAS_WRAPPERS_H_ 1
 
 
 #include <limits>
@@ -75,10 +75,14 @@ inline void mul_elements(
 template<typename Real>
 inline void blas_scale(Real* data, const Real alpha, const MatrixIndexT num_rows, 
                const MatrixIndexT num_cols, const MatrixIndexT stride) {
-  for(MatrixIndexT r = 0; r < num_rows; r++) {
-    for(MatrixIndexT c = 0; c < num_cols; c++) {
-      data[r * stride + c] *= alpha;
-    }  
+  if (alpha == 1.0) { 
+    return;
+  } else { //alpha != 1.0
+    for(MatrixIndexT r = 0; r < num_rows; r++) {
+      for(MatrixIndexT c = 0; c < num_cols; c++) {
+        data[r*stride + c] *= alpha;
+      }  
+    }
   }
 }
 
@@ -90,12 +94,19 @@ void blas_scale(double* data, const double alpha, const MatrixIndexT num_rows,
                        const MatrixIndexT num_cols, const MatrixIndexT stride);
 
 // ori = ori + alpha * additional(vector level)
+// [in] num is INTEGER, number of elements need to be deal.
+// [in] additional_data, dimension (1 + (num-1)*additional_inc)
+// [in] ori_data, dimension (1 + (num-1)*ori_inc)
 template<typename Real>
 inline void blas_axpy(const MatrixIndexT num, const Real alpha,
                       const Real* additional_data, const MatrixIndexT additional_inc,
                       Real* ori_data, const MatrixIndexT ori_inc) {
   for(MatrixIndexT i = 0; i < num; i++) {
-    ori_data[i * ori_inc] += alpha * additional_data[i * additional_inc];
+    if (alpha != 1.0) {
+      ori_data[i * ori_inc] += alpha * additional_data[i * additional_inc];
+    } else {
+      ori_data[i * ori_inc] += additional_data[i * additional_inc];
+    }
   }
 }
 
@@ -109,7 +120,7 @@ void blas_axpy(const MatrixIndexT num, const double alpha, const double* additio
 template<typename Real>
 inline Real blas_dot(const MatrixIndexT N, const Real *const X, const int incX,
                      const Real *const Y, const MatrixIndexT incY){
-  Real result = 0;
+  Real result = 0.0;
   for(MatrixIndexT i = 0; i < N; i++) {
     result = result +  X[i * incX] * Y[i * incY];
   }
@@ -127,7 +138,7 @@ double blas_dot(const MatrixIndexT N, const double *const X, const MatrixIndexT 
 template<typename Real>
 inline void blas_scale(const int N, const float alpha, Real *data, const int inc){
   for(MatrixIndexT i = 0; i < N; i++) {
-    data[i * inc] *= alpha;
+    if (alpha != 1.0) data[i * inc] *= alpha;
   }
 }
 

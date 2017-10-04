@@ -2,7 +2,7 @@
 
 all:
 
-include ../kaldi.mk
+include ../pitch.mk
 
 TESTFILES = resample-test
 
@@ -10,10 +10,10 @@ OBJFILES = feature-functions.o wave-reader.o \
            pitch-functions.o resample.o \
 		   feature-window.o
 
-LIBNAME = kaldi-feat
+LIBNAME = pitch-feat
 
-ADDLIBS = ../util/kaldi-util.a \
-          ../matrix/kaldi-matrix.a ../base/kaldi-base.a 
+ADDLIBS = ../util/pitch-util.a \
+          ../matrix/pitch-matrix.a ../base/pitch-base.a 
 
 include ../makefiles/default_rules.mk
 

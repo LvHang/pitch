@@ -194,7 +194,6 @@ compute-and-process-kaldi-pitch-feats.o: \
  /usr/include/c++/4.9/unordered_set \
  /usr/include/c++/4.9/bits/unordered_set.h ../util/table-types.h \
  ../matrix/matrix-lib.h ../feat/pitch-functions.h \
- ../feat/mel-computations.h /usr/include/c++/4.9/complex \
  ../itf/online-feature-itf.h ../feat/wave-reader.h
 compute-kaldi-pitch-feats.o: compute-kaldi-pitch-feats.cc \
  /usr/include/stdc-predef.h ../base/kaldi-common.h \
@@ -392,7 +391,6 @@ compute-kaldi-pitch-feats.o: compute-kaldi-pitch-feats.cc \
  /usr/include/c++/4.9/unordered_set \
  /usr/include/c++/4.9/bits/unordered_set.h ../util/table-types.h \
  ../matrix/matrix-lib.h ../feat/pitch-functions.h \
- ../feat/mel-computations.h /usr/include/c++/4.9/complex \
  ../itf/online-feature-itf.h ../feat/wave-reader.h
 interpolate-pitch.o: interpolate-pitch.cc /usr/include/stdc-predef.h \
  ../base/kaldi-common.h /usr/include/c++/4.9/cstddef \
@@ -785,7 +783,6 @@ process-kaldi-pitch-feats.o: process-kaldi-pitch-feats.cc \
  /usr/include/c++/4.9/unordered_set \
  /usr/include/c++/4.9/bits/unordered_set.h ../util/table-types.h \
  ../matrix/matrix-lib.h ../feat/pitch-functions.h \
- ../feat/mel-computations.h /usr/include/c++/4.9/complex \
  ../itf/online-feature-itf.h ../feat/wave-reader.h
 process-pitch-feats.o: process-pitch-feats.cc /usr/include/stdc-predef.h \
  ../base/kaldi-common.h /usr/include/c++/4.9/cstddef \

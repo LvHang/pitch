@@ -3,22 +3,16 @@
 ifndef DOUBLE_PRECISION
 $(error DOUBLE_PRECISION not defined.)
 endif
-ifndef OPENFSTINC
-$(error OPENFSTINC not defined.)
-endif
-ifndef OPENFSTLIBS
-$(error OPENFSTLIBS not defined.)
-endif
 
-CXXFLAGS = -std=c++11 -I.. -I$(OPENFSTINC) $(EXTRA_CXXFLAGS) \
+CXXFLAGS = -std=c++11 -I.. $(EXTRA_CXXFLAGS) \
            -Wall -Wno-sign-compare -Wno-unused-local-typedefs \
            -Wno-deprecated-declarations -Winit-self \
            -DKALDI_DOUBLEPRECISION=$(DOUBLE_PRECISION) \
-           -DHAVE_EXECINFO_H=1 -DHAVE_CXXABI_H -DHAVE_CLAPACK \
+           -DHAVE_EXECINFO_H=1 -DHAVE_CXXABI_H \
            -msse -msse2 -pthread \
            -g # -O0 -DKALDI_PARANOID
 
-ifeq ($(KALDI_FLAVOR), dynamic)
+ifeq ($(PITCH_FLAVOR), dynamic)
 CXXFLAGS += -fPIC
 endif
 
@@ -32,5 +26,5 @@ else ifeq ($(findstring GCC,$(COMPILER)),GCC)
 CXXFLAGS += -flax-vector-conversions
 endif
 
-LDFLAGS = $(EXTRA_LDFLAGS) $(OPENFSTLDFLAGS) -g
-LDLIBS = $(EXTRA_LDLIBS) $(OPENFSTLIBS) -framework Accelerate -lm -lpthread -ldl
+LDFLAGS = $(EXTRA_LDFLAGS) -g
+LDLIBS = $(EXTRA_LDLIBS) -framework Accelerate -lm -lpthread -ldl

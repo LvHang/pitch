@@ -1,18 +1,16 @@
 
-SHELL := /bin/bash
-
-ifeq ($(KALDI_FLAVOR), dynamic)
+ifeq ($(PITCH_FLAVOR), dynamic)
   ifeq ($(shell uname), Darwin)
     ifdef LIBNAME
       LIBFILE = lib$(LIBNAME).dylib
     endif
-    LDFLAGS += -Wl,-rpath -Wl,$(KALDILIBDIR)
+    LDFLAGS += -Wl,-rpath -Wl,$(PITCHLIBDIR)
     EXTRA_LDLIBS += $(foreach dep,$(ADDLIBS), $(dir $(dep))lib$(notdir $(basename $(dep))).dylib)
   else ifeq ($(shell uname), Linux)
     ifdef LIBNAME
       LIBFILE = lib$(LIBNAME).so
     endif
-    LDFLAGS += -Wl,-rpath=$(shell readlink -f $(KALDILIBDIR))
+    LDFLAGS += -Wl,-rpath=$(shell readlink -f $(PITCHLIBDIR))
     EXTRA_LDLIBS += $(foreach dep,$(ADDLIBS), $(dir $(dep))lib$(notdir $(basename $(dep))).so)
   else  # Platform not supported
     $(error Dynamic libraries not supported on this platform. Run configure with --static flag.)
@@ -26,17 +24,19 @@ endif
 
 all: $(LIBFILE) $(BINFILES)
 
+# Firstly, build the static library with .o files.
+# For Darwin and linux system, build dynamic library with .o files and lib'archive'.{dylib,so}
 $(LIBFILE): $(OBJFILES)
 	$(AR) -cru $(LIBNAME).a $(OBJFILES)
 	$(RANLIB) $(LIBNAME).a
-ifeq ($(KALDI_FLAVOR), dynamic)
+ifeq ($(PITCH_FLAVOR), dynamic)
 ifeq ($(shell uname), Darwin)
 	$(CXX) -dynamiclib -o $@ -install_name @rpath/$@ $(LDFLAGS) $(OBJFILES) $(LDLIBS)
-	rm -f $(KALDILIBDIR)/$@; ln -s $(shell pwd)/$@ $(KALDILIBDIR)/$@
+	rm -f $(PITCHLIBDIR)/$@; ln -s $(shell pwd)/$@ $(PITCHLIBDIR)/$@
 else ifeq ($(shell uname), Linux)
 	# Building shared library from static (static was compiled with -fPIC)
 	$(CXX) -shared -o $@ -Wl,--no-undefined -Wl,--as-needed  -Wl,-soname=$@,--whole-archive $(LIBNAME).a -Wl,--no-whole-archive $(LDFLAGS) $(LDLIBS)
-	rm -f $(KALDILIBDIR)/$@; ln -s $(shell pwd)/$@ $(KALDILIBDIR)/$@
+	rm -f $(PITCHLIBDIR)/$@; ln -s $(shell pwd)/$@ $(PITCHLIBDIR)/$@
 else  # Platform not supported
 	$(error Dynamic libraries not supported on this platform. Run configure with --static flag.)
 endif
@@ -47,12 +47,14 @@ endif
 # use the C++ compiler $(CXX) instead.
 LINK.o = $(CXX) $(LDFLAGS) $(TARGET_ARCH)
 
-ifeq ($(KALDI_FLAVOR), dynamic)
+# For adding lib in dynamic style, it has already been added to LDLIBS.
+ifeq ($(PITCH_FLAVOR), dynamic)
 $(BINFILES): $(LIBFILE)
 else
 $(BINFILES): $(LIBFILE) $(XDEPENDS)
 endif
 
+# Not really useful.
 # Rule below would expand to, e.g.:
 # ../base/kaldi-base.a:
 # 	make -c ../base kaldi-base.a
@@ -69,7 +71,7 @@ clean:
 distclean: clean
 	-rm -f .depend.mk
 
-ifeq ($(KALDI_FLAVOR), dynamic)
+ifeq ($(PITCH_FLAVOR), dynamic)
 $(TESTFILES): $(LIBFILE)
 else
 $(TESTFILES): $(LIBFILE) $(XDEPENDS)

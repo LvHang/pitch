@@ -244,14 +244,14 @@ void VectorBase<Real>::AddMatVec(const Real alpha,
     Real *data = this->data_;
     const Real *mat_data = M.Data(), *v_data = v.Data();
     for (MatrixIndexT i = 0; i < dim; i++, mat_data += mat_stride, data++) {
-      *data = beta * (*data) + alpha * blas_dot(dim, mat_data, 1, v_data, 1);
+      *data = beta * (*data) + alpha * blas_dot(v.dim_, mat_data, 1, v_data, 1);
     }
   } else { //trans == kTrans
     MatrixIndexT dim = this->dim_, mat_stride = M.Stride();
     Real *data = this->data_;
     const Real *mat_data = M.Data(), *v_data = v.Data();
     for (MatrixIndexT i = 0; i < dim; i++, mat_data++, data++) {
-      *data = beta * (*data) + alpha * blas_dot(dim, mat_data, mat_stride,
+      *data = beta * (*data) + alpha * blas_dot(v.dim_, mat_data, mat_stride,
                                                 v_data, 1);
     }
   }
@@ -293,10 +293,12 @@ void VectorBase<Real>::AddVecVec(Real alpha, const VectorBase<Real> &v,
   KALDI_ASSERT(v.data_ != this->data_ && r.data_ != this->data_);
   // We pretend that v is a band-diagonal matrix.
   KALDI_ASSERT(dim_ == v.dim_ && dim_ == r.dim_);
-  // (*this) = (beta)(*this) + alpha * v * r
-  for(MatrixIndexT i = 0; i < dim_; i++) {
-    data_[i] = beta * data_[i] + alpha * blas_dot(dim_, v.data_, 1, r.data_, 1);
-  } 
+  // add element-by-element product of vector
+  Vector<Real> element_product(dim_);
+  for (MatrixIndexT i = 0; i < dim_; i++) {
+    element_product(i) = v(i) * r(i);
+  }
+  blas_axpy(dim_, alpha, element_product.Data(), 1, data_, 1);
 }
 
 template<typename Real>
