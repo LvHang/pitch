@@ -1,0 +1,28 @@
+
+These instructions are valid for UNIX-like systems (these steps have
+been run on various Linux distributions; Darwin; Cygwin).
+
+As the tool does not depend on any other toolkits, you just need to complete
+the installation steps in src/INSTALL.
+
+The installation instructions are
+
+  ./configure --shared
+  make depend
+  make
+
+Note that "make" takes a long time. You can speed it up by running make
+in parallel if you have multiple CPUs, e.g. to use 8 CPUs
+
+  make depend -j 8
+  make -j 8
+
+The standalone extractor requires a relatively recent C++ compiler with C++11 support,
+e.g. g++ >= 4.7, Apple clang >= 5.0 or LLVM clang >= 3.3. If your system
+default compiler does not support C++11, you can specify a C++11 compliant
+compiler by setting the CXX environment variable, e.g.
+
+  CXX=g++-4.8 ./configure --shared
+
+The standalone extractor is based on Kaldi toolkit.
+For more information, see documentation at http://kaldi-asr.org/doc/.

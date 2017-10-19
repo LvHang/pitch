@@ -161,6 +161,7 @@ void MatrixBase<Real>::MulElements(const MatrixBase<Real> &a) {
 template<typename Real> void MatrixBase<Real>::Scale(Real alpha) {
   if (alpha == 1.0) return;
   if (num_rows_ == 0) return;
+  // Scaling the matrix with a matrix-level scale function.
   blas_scale(data_, alpha, num_rows_, num_cols_, stride_);
 }
 
@@ -282,13 +283,16 @@ void MatrixBase<Real>::AddMat(const Real alpha, const MatrixBase<Real>& A,
       if (num_rows_ == 0) return;
       for (MatrixIndexT row = 0; row < num_rows_; row++, adata += aStride,
                data += stride) {
+        // a row of data = a row of data + alpha * (a row of adata)
         blas_axpy(num_cols_, alpha, adata, 1, data, 1);
       }
     } else {
       KALDI_ASSERT(A.num_cols_ == num_rows_ && A.num_rows_ == num_cols_);
       if (num_rows_ == 0) return;
-      for (MatrixIndexT row = 0; row < num_rows_; row++, adata++, data += stride)
+      for (MatrixIndexT row = 0; row < num_rows_; row++, adata++, data += stride) {
+        // a row of data = a row of data + alpha * (a column of adata)
         blas_axpy(num_cols_, alpha, adata, aStride, data, 1);
+      }
     }
   }
 }

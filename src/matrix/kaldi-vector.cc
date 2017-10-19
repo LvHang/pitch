@@ -237,8 +237,9 @@ void VectorBase<Real>::AddMatVec(const Real alpha,
   KALDI_ASSERT((trans == kNoTrans && M.NumCols() == v.dim_ && M.NumRows() == dim_)
                || (trans == kTrans && M.NumRows() == v.dim_ && M.NumCols() == dim_));
   KALDI_ASSERT(&v != this);
-  //cblas_Xgemv(trans, M.NumRows(), M.NumCols(), alpha, M.Data(), M.Stride(),
-  //            v.Data(), 1, beta, data_, 1);
+  // Call blas_dot to produce the result of inner product of two vectors.
+  // Bear in mind, in kaldi "stride" is the distance in memory between each row.
+  // It will be greater than or equal to "NumCols".
   if (trans == kNoTrans) {
     MatrixIndexT dim = this->dim_, mat_stride = M.Stride();
     Real *data = this->data_;
@@ -298,6 +299,7 @@ void VectorBase<Real>::AddVecVec(Real alpha, const VectorBase<Real> &v,
   for (MatrixIndexT i = 0; i < dim_; i++) {
     element_product(i) = v(i) * r(i);
   }
+  // Conduct the (data + alpha * element_product)
   blas_axpy(dim_, alpha, element_product.Data(), 1, data_, 1);
 }
 
@@ -401,11 +403,12 @@ void VectorBase<Real>::AddRowSumMat(Real alpha, const MatrixBase<Real> &M, Real 
 
   // implement the function according to a dimension cutoff for computation efficiency
   if (num_rows <= 64) {
+    // vector-level scale
     blas_scale(dim, beta, data, 1);
     const Real *m_data = M.Data();
     for (MatrixIndexT i = 0; i < num_rows; i++, m_data += stride)
+      // data = data + alpha * m_data
       blas_axpy(dim, alpha, m_data, 1, data, 1);
-
   } else {
     Vector<Real> ones(M.NumRows());
     ones.Set(1.0);
@@ -424,6 +427,7 @@ void VectorBase<Real>::AddDiagMat2(
     Real *data = this->data_;
     const Real *mat_data = M.Data();
     for (MatrixIndexT i = 0; i < rows; i++, mat_data += mat_stride, data++)
+      // compute the inner product of two row vectors.
       *data = beta * *data + alpha * blas_dot(cols,mat_data,1,mat_data,1);
   } else {
     KALDI_ASSERT(this->dim_ == M.NumCols());
@@ -432,6 +436,7 @@ void VectorBase<Real>::AddDiagMat2(
     Real *data = this->data_;
     const Real *mat_data = M.Data();
     for (MatrixIndexT i = 0; i < cols; i++, mat_data++, data++)
+      // compute the inner product of two column vectors.
       *data = beta * *data + alpha * blas_dot(rows, mat_data, mat_stride,
                                                  mat_data, mat_stride);
   }
@@ -676,6 +681,7 @@ Real VecVec(const VectorBase<Real> &a,
             const VectorBase<Real> &b) {
   MatrixIndexT adim = a.Dim();
   KALDI_ASSERT(adim == b.Dim());
+  // Returns dot product between a and b.
   return blas_dot(adim, a.Data(), 1, b.Data(), 1);
 }
 

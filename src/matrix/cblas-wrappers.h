@@ -51,6 +51,7 @@ inline void mul_elements(
     b[i] *= a[i];
 }
 
+
 inline void mul_elements(
     const MatrixIndexT dim,
     const float *a,
@@ -71,7 +72,17 @@ inline void mul_elements(
     b[i] *= a[i];
 }
 
-// A = alpha * A(Matrix level)
+
+/**This function is a matrix-level scale operation. In brief, 
+ * the expression is "A = alpha * A(Matrix level)".
+ *
+ * @param [in,out] *data  It always be a MatrixBase pointer in kaldi. It is the
+ *                        entity of data.
+ * @param [in] alpha  Scaling factor for the values in "data".
+ * @param [in] num_rows  Number of rows in matrix "data".   
+ * @param [in] num_cols  Number of columns in matrix "data".
+ * @param [in] stride  The distance in memory betwwen each row.
+ */
 template<typename Real>
 inline void blas_scale(Real* data, const Real alpha, const MatrixIndexT num_rows, 
                const MatrixIndexT num_cols, const MatrixIndexT stride) {
@@ -86,6 +97,8 @@ inline void blas_scale(Real* data, const Real alpha, const MatrixIndexT num_rows
   }
 }
 
+
+// template instantiation(float and double)
 template
 void blas_scale(float* data, const float alpha, const MatrixIndexT num_rows,
                        const MatrixIndexT num_cols, const MatrixIndexT stride);
@@ -93,10 +106,22 @@ template
 void blas_scale(double* data, const double alpha, const MatrixIndexT num_rows,
                        const MatrixIndexT num_cols, const MatrixIndexT stride);
 
-// ori = ori + alpha * additional(vector level)
-// [in] num is INTEGER, number of elements need to be deal.
-// [in] additional_data, dimension (1 + (num-1)*additional_inc)
-// [in] ori_data, dimension (1 + (num-1)*ori_inc)
+
+/**This function does a constant times a vector plus a vector. In brief,
+ * the expression is ori = ori + alpha * additional(vector level).
+ *
+ * @param [in] num  It is INTEGER, number of elements need to be dealed.
+ * @param [in] alpha  Scaling factor for the values in "additional_data".
+ * @param [in] *additional_data  It always be a VectorBase pointer. It contains
+ *                               the entity of data which will multiply by a 
+ *                               constant.
+ * @param [in] additional_inc  Stride with "additional_data". Each 
+ *                             "additional_inc"th element will be used.
+ * @param [in,out] *ori_data  The entity of data. The values will be used later.
+ *                            It add the result of multiplication.
+ * @param [in] ori_inc  Stride with "ori_data". Each "ori_inc"th element will
+ *                      be used.
+ */
 template<typename Real>
 inline void blas_axpy(const MatrixIndexT num, const Real alpha,
                       const Real* additional_data, const MatrixIndexT additional_inc,
@@ -110,6 +135,8 @@ inline void blas_axpy(const MatrixIndexT num, const Real alpha,
   }
 }
 
+
+// template instantiation(float and double)
 template
 void blas_axpy(const MatrixIndexT num, const float alpha, const float* additional_data,
                const MatrixIndexT additional_inc, float* ori_data, const MatrixIndexT ori_inc);
@@ -117,36 +144,59 @@ template
 void blas_axpy(const MatrixIndexT num, const double alpha, const double* additional_data,
                const MatrixIndexT additional_inc, double* ori_data, const MatrixIndexT ori_inc);
 
+
+/**The function does inner product of two vectors.
+ * 
+ * @param [in] num  The number of elements need to be dealed.
+ * @param [in] X  Input vector X.
+ * @param [in] incX  Stride within X. Each "incX"th element is used.
+ * @param [in] Y  Input vector Y.
+ * @param [in] incY  Stride within Y. Each "incY"th element is used.
+ *
+ * @return Return the result of inner product.
+ */
 template<typename Real>
-inline Real blas_dot(const MatrixIndexT N, const Real *const X, const int incX,
+inline Real blas_dot(const MatrixIndexT num, const Real *const X, const int incX,
                      const Real *const Y, const MatrixIndexT incY){
   Real result = 0.0;
-  for(MatrixIndexT i = 0; i < N; i++) {
+  for(MatrixIndexT i = 0; i < num; i++) {
     result = result +  X[i * incX] * Y[i * incY];
   }
   return result;
 }
 
+
+// template instantiation(float and double)
 template
-float blas_dot(const MatrixIndexT N, const float *const X, const MatrixIndexT incX,
+float blas_dot(const MatrixIndexT num, const float *const X, const MatrixIndexT incX,
                const float *const Y, const MatrixIndexT incY);
 template
-double blas_dot(const MatrixIndexT N, const double *const X, const MatrixIndexT incX,
+double blas_dot(const MatrixIndexT num, const double *const X, const MatrixIndexT incX,
                 const double *const Y, const MatrixIndexT incY);
 
-// *data = alpha * (*data)(vector level)
+
+/**The function does vector-level scale operation. In brief, the expression is
+ * (*data) = alpha * (*data).[vector level]
+ *
+ * @param [in] num  The number of elements need to be operated.
+ * @param [in] alpha  Scaling factor for the values in "data".
+ * @param [in,out] *data  It always be a VectorBase pointer in kaldi. It contains
+ *                        the entity of data.
+ * @param [in] inc  Stride within "data". Each "inc"th element will be used.
+ */
 template<typename Real>
-inline void blas_scale(const int N, const float alpha, Real *data, const int inc){
-  for(MatrixIndexT i = 0; i < N; i++) {
+inline void blas_scale(const MatrixIndexT num, const float alpha, Real *data, const int inc){
+  for(MatrixIndexT i = 0; i < num; i++) {
     if (alpha != 1.0) data[i * inc] *= alpha;
   }
 }
 
-template
-void blas_scale(const int N, const float alpha, float *data, const int inc);
-template
-void blas_scale(const int N, const float alpha, double *data, const int inc);
 
+// template instantiation(float and double)
+template
+void blas_scale(const MatrixIndexT num, const float alpha, float *data, const int inc);
+template
+void blas_scale(const MatrixIndexT num, const float alpha, double *data, const int inc);
 }
 // namespace kaldi
 
